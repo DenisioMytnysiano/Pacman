@@ -10,7 +10,6 @@ class SearchController:
     current_index = 2
 
     @staticmethod
-    @print_execution_time
     def run(game_state):
         SearchController.__update()
         result = SearchController.get_algorithm()(game_state)

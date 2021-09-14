@@ -4,11 +4,31 @@ from game.components import layout
 from game.components.layout import Layout
 from game.rules.game_rules import ClassicGameRules
 from graphics.pacman_graphics import PacmanGraphics
+from utils.maze_generator import MazeGenerator
 
-def setup_game():
 
+def get_size(size):
+    return [int(x) for x in size.split("x")]
+
+
+def setup_game(cli_args):
+    from optparse import OptionParser
     args = dict()
-    args['layout'] = layout.get_layout("mediumClassic")
+    parser = OptionParser()
+    parser.add_option("--generate", dest="generate_maze", default=False,
+                      help="Whether to generate maze")
+    parser.add_option('--generated-size', dest='gen_size',
+                      help='Size of generated maze', default='20x10')
+    parser.add_option('--ghosts-generated', dest='num_ghosts',
+                      help='How many ghosts to generate', default=1)
+    options, other_junk = parser.parse_args(cli_args)
+    if options.generate_maze:
+        file_name = "generatedMaze"
+        height, width = get_size(options.gen_size)
+        MazeGenerator.generate(height, width, int(options.num_ghosts), file_name)
+        args['layout'] = layout.get_layout(file_name)
+    else:
+        args['layout'] = layout.get_layout("mediumClassic")
     pacman_type = load_agent("KeyboardAgent")
     pacman = pacman_type()
     args['pacman'] = pacman
@@ -45,5 +65,5 @@ def run_game(layout: Layout, pacman: Agent, ghosts: list[Agent],
 
 
 if __name__ == '__main__':
-    setup = setup_game()
+    setup = setup_game(sys.argv[1:])
     run_game(**setup)

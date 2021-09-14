@@ -1,10 +1,12 @@
 from collections import deque
 from queue import Queue, PriorityQueue
 from utils.action_utils import ActionUtils
+from utils.decorators import print_execution_time
 from utils.math_utils import MathUtils
 from utils.search_utils import SearchUtils
 
 
+@print_execution_time
 def bfs(game_state):
     start = game_state.get_pacman_position()
     goals = [
@@ -34,6 +36,7 @@ def bfs(game_state):
     return [SearchUtils.restore_path(start, goal, memory) for goal in goals]
 
 
+@print_execution_time
 def dfs(game_state):
     start = game_state.get_pacman_position()
     goals = [
@@ -60,6 +63,7 @@ def dfs(game_state):
     return [SearchUtils.restore_path(start, goal, memory) for goal in goals]
 
 
+@print_execution_time
 def unisearch(game_state):
     start = game_state.get_pacman_position()
     goals = [
