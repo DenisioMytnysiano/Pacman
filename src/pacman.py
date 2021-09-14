@@ -8,7 +8,7 @@ from graphics.pacman_graphics import PacmanGraphics
 def setup_game():
 
     args = dict()
-    args['layout'] = layout.get_layout("originalClassic")
+    args['layout'] = layout.get_layout("mediumClassic")
     pacman_type = load_agent("KeyboardAgent")
     pacman = pacman_type()
     args['pacman'] = pacman

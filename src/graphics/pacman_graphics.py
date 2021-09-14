@@ -47,14 +47,14 @@ class PacmanGraphics:
 
     def update(self, new_state):
         agent_index = new_state._agent_moved
-        agentState = new_state.agent_states[agent_index]
-        prevState, prevImage = self.agent_images[agent_index]
-        if agentState.is_pacman:
-            self.animate_pacman(agentState, prevState, prevImage)
+        agent_state = new_state.agent_states[agent_index]
+        prev_state, prev_image = self.agent_images[agent_index]
+        if agent_state.is_pacman:
+            self.animate_pacman(agent_state, prev_state, prev_image)
         else:
-            self.move_ghost(agentState, agent_index, prevState, prevImage)
-        self.agent_images[agent_index] = (agentState, prevImage)
-
+            self.move_ghost(agent_state, agent_index, prev_state, prev_image)
+        self.agent_images[agent_index] = (agent_state, prev_image)
+        self.draw_paths(new_state)
         if new_state._food_eaten is not None:
             self.remove_food(new_state._food_eaten, self.food)
         if new_state._capsule_eaten is not None:
@@ -206,6 +206,7 @@ class PacmanGraphics:
                             MathUtils.add_vectors(screen, end_shift),
                             WALL_COLOR,
                         )
+
     def is_wall(self, x, y, walls):
         if x < 0 or y < 0 or x >= walls.width or y >= walls.height:
             return False
@@ -215,7 +216,6 @@ class PacmanGraphics:
         food_images = []
         color = FOOD_COLOR
         for index_x, x in enumerate(food_matrix):
-
             image_row = []
             food_images.append(image_row)
             for index_y, cell in enumerate(x):
@@ -229,6 +229,27 @@ class PacmanGraphics:
                 else:
                     image_row.append(None)
         return food_images
+
+    def draw_paths(self, game_state):
+        if hasattr(self, "ghost_paths"):
+            for path in self.ghost_paths:
+                GraphicsUtils.remove_from_screen(path)
+        ghost_paths = []
+
+        for idx, path in enumerate(game_state.paths):
+            color = GHOST_COLORS[idx + 1]
+
+            for node in path:
+                screen = self.to_screen(node)
+                image = GraphicsUtils.circle(
+                    screen,
+                    0.2 * self.grid_size,
+                    color,
+                    style="arc",
+                    width=5,
+                )
+                ghost_paths.append(image)
+        self.ghost_paths = ghost_paths
 
     def draw_capsules(self, capsules):
         capsule_images = {}

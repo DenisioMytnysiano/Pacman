@@ -23,6 +23,7 @@ class GameStateData:
         self._lose = False
         self._win = False
         self.score_change = 0
+        self.paths = list()
 
     def deep_copy(self):
         state = GameStateData(self)

@@ -1,4 +1,5 @@
-from graphics.constants import INFO_PANE_HEIGHT, PACMAN_COLOR, SCORE_COLOR
+from graphics.constants import INFO_PANE_HEIGHT, SCORE_COLOR
+from search.search_controller import SearchController
 from utils.graphics_utils import GraphicsUtils
 
 
@@ -23,8 +24,8 @@ class InfoPanel:
         return x, y
 
     def draw(self):
-        self.score_text = GraphicsUtils.text(self.to_screen(0, 0), self.text_color, "SCORE:0", "Times", self.font_size, "bold")
+        self.score_text = GraphicsUtils.text(self.to_screen(0, 0), self.text_color, "", "Times", self.font_size, "bold")
 
     def update(self, score):
-        GraphicsUtils.change_text(self.score_text, "SCORE: % 4d" % score)
+        GraphicsUtils.change_text(self.score_text, f"SCORE: {score} SEARCH:{SearchController.get_algorithm().__name__}")
 

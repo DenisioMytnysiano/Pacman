@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from search.search_controller import SearchController
+
 
 @dataclass
 class Game:

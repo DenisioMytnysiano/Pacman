@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from game.rules.pacman_rules import PacmanRules
 from game.rules.ghost_rules import GhostRules
 from game.states.game_state_data import GameStateData
+from search.search_controller import SearchController
+
 TIME_PENALTY = 1
 
 
@@ -47,7 +49,8 @@ class GameState:
             state.data.score_change += -TIME_PENALTY
         else:
             GhostRules.decrement_timer(state.data.agent_states[agentIndex])
-
+            
+        state.data.paths = SearchController.run(self)
         GhostRules.check_death(state, agentIndex)
         state.data._agent_moved = agentIndex
         state.data.score += state.data.score_change

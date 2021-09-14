@@ -16,6 +16,10 @@ class MathUtils:
         return vector_1[0] + vector_2[0], vector_1[1] + vector_2[1]
 
     @staticmethod
+    def or_vectors(vector_1, vector_2):
+        return [x or y for x, y in zip(vector_1, vector_2)]
+
+    @staticmethod
     def nearest_grid_point(pos):
         current_row, current_col = pos
         grid_row = int(current_row + 0.5)
