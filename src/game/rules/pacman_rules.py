@@ -14,7 +14,7 @@ class PacmanRules:
     def apply_action(state, action):
         legal = PacmanRules.get_legal_actions(state)
         if action not in legal:
-            raise Exception("Illegal action " + str(action))
+            return
 
         pacman_state = state.data.agent_states[0]
 

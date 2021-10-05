@@ -1,5 +1,4 @@
 from graphics.constants import INFO_PANE_HEIGHT, SCORE_COLOR
-from search.search_controller import SearchController
 from utils.graphics_utils import GraphicsUtils
 
 
@@ -27,5 +26,5 @@ class InfoPanel:
         self.score_text = GraphicsUtils.text(self.to_screen(0, 0), self.text_color, "", "Times", self.font_size, "bold")
 
     def update(self, score):
-        GraphicsUtils.change_text(self.score_text, f"SCORE: {score} SEARCH:{SearchController.get_algorithm().__name__}")
+        GraphicsUtils.change_text(self.score_text, f"SCORE: {score}")
 

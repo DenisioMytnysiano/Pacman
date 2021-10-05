@@ -33,4 +33,3 @@ class Grid:
                 if self[x][y] == key:
                     result.append((x, y))
         return result
-

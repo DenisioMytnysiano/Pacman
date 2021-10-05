@@ -1,99 +1,52 @@
-from collections import deque
-from queue import Queue, PriorityQueue
+from collections import Callable
+from search.cost_functions import CostFn
+from search.data_structures import PriorityQueue
 from utils.action_utils import ActionUtils
-from utils.decorators import print_execution_time
-from utils.math_utils import MathUtils
-from utils.search_utils import SearchUtils
 
 
-@print_execution_time
-def bfs(game_state):
-    start = game_state.get_pacman_position()
-    goals = [
-        game_state.get_ghost_position(i)
-        for i in range(1, game_state.get_num_agents())
-    ]
-    found = [False] * len(goals)
-    visited = set()
-    memory = dict()
-    queue = Queue()
-    queue.put((start, 0))
-
-    while not queue.empty():
-        parent, cost = queue.get()
-        visited.add(parent)
-
-        found = MathUtils.or_vectors(found, [goal == parent for goal in goals])
-        if all(found) is True:
-            break
-        for node in ActionUtils.get_neighbours(parent, game_state.data.layout.walls):
-            if node in visited:
-                continue
-            new_cost = cost + 1
-            memory[node] = parent
-            queue.put((node, new_cost))
-
-    return [SearchUtils.restore_path(start, goal, memory) for goal in goals]
-
-
-@print_execution_time
-def dfs(game_state):
-    start = game_state.get_pacman_position()
-    goals = [
-        game_state.get_ghost_position(i)
-        for i in range(1, game_state.get_num_agents())
-    ]
-    costs = {start: 0}
-    memory = dict()
-    stack = deque()
-    stack.append(start)
-
-    while not len(stack) == 0:
-        parent = stack.pop()
-        cost = costs[parent]
-
-        for node in ActionUtils.get_neighbours(parent, game_state.data.layout.walls):
-            new_cost = cost + 1
-            if costs.get(node, 1000) <= new_cost:
-                continue
-            memory[node] = parent
-            stack.append(node)
-            costs[node] = new_cost
-
-    return [SearchUtils.restore_path(start, goal, memory) for goal in goals]
-
-
-@print_execution_time
-def unisearch(game_state):
-    start = game_state.get_pacman_position()
-    goals = [
-        game_state.get_ghost_position(i)
-        for i in range(1, game_state.get_num_agents())
-    ]
-
-    found = [False] * len(goals)
+def a_star_single_point(game_state, heuristic: Callable, cost_fn: CostFn, greedy=False, start=None, goal=None):
+    if start is None:
+        start = game_state.get_pacman_position()
+    if goal is None:
+        goal = game_state.data.layout.food.as_list()[0]
     costs = {start: 0}
     visited = set()
-    memory = dict()
     queue = PriorityQueue()
-    queue.put((0, start))
+    queue.push((start, []), 0)
 
-    while not queue.empty():
-        cost, parent = queue.get()
-        visited.add(parent)
-        if costs[parent] < cost:
-            continue
-        found = MathUtils.or_vectors(found, [goal == parent for goal in goals])
-        if all(found) is True:
-            break
-        for node in ActionUtils.get_neighbours(parent, game_state.data.layout.walls):
+    while not queue.is_empty():
+        (parent, actions), _ = queue.pop()
+        cost = costs[parent]
+        if parent[0] == goal[0] and parent[1] == goal[1]:
+            return actions
+        for node, action in ActionUtils.get_neighbours(parent, game_state.data.layout.walls):
             if node in visited:
                 continue
-            new_cost = cost + 1
+            new_cost = cost_fn()(node, game_state)
+            if not greedy:
+                new_cost += cost
             if new_cost < costs.get(node, 1000):
+                new_actions = actions + [action]
+                priority = new_cost + heuristic(node, goal)
                 costs[node] = new_cost
-                memory[node] = parent
-                queue.put((new_cost, node))
+                queue.push((node, new_actions), priority)
 
-    return [SearchUtils.restore_path(start, goal, memory) for goal in goals]
+    return []
+
+
+def a_star_all_food(game_state, heuristics, cost_fn, greedy=False):
+    start = game_state.get_pacman_position()
+    points = [start] + game_state.data.layout.food.as_list()
+    rest_food = sorted(points, key=lambda x: heuristics(x, start))
+    actions = []
+    for i in range(len(rest_food)-1):
+        current_start = rest_food[0]
+        current_goal = rest_food[1]
+        actions.extend(a_star_single_point(game_state, heuristics, cost_fn, greedy, start=current_start, goal=current_goal))
+        rest_food = rest_food[1:]
+        rest_food = sorted(rest_food, key=lambda x: heuristics(x, current_start))
+    return actions
+
+
+
 

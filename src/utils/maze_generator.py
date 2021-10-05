@@ -6,16 +6,16 @@ from random import randint
 class MazeGenerator:
 
     @staticmethod
-    def generate(width: int, height: int, num_ghosts: int = 1, file_name: str = "generatedMaze.lay") -> NoReturn:
+    def generate(width: int, height: int, num_ghosts: int = 1, file_name: str = "generatedMaze.lay", num_food = 10) -> NoReturn:
         maze = [[None for x in range(width)] for y in range(height)]
         for x in range(height):
             for y in range(width):
-                maze[x][y] = "."
+                maze[x][y] = " "
                 maze[0][y] = maze[height-1][y] = "%"
             maze[x][0] = maze[x][width-1] = "%"
 
         # Add obstacles
-        for i in range(int(width*height/5)):
+        for i in range(int(width*height/3)):
             x = randint(1, height-1)
             y = randint(1, width-1)
             maze[x][y] = "%"
@@ -28,6 +28,14 @@ class MazeGenerator:
                 x = randint(1, height - 1)
                 y = randint(1, width - 1)
             maze[x][y] = "G" if i > 0 else "P"
+
+        for i in range(num_food):
+            x = randint(1, height - 1)
+            y = randint(1, width - 1)
+            while maze[x][y] == "%" or maze[x][y] == "P":
+                x = randint(1, height - 1)
+                y = randint(1, width - 1)
+            maze[x][y] = "."
 
         with open(os.path.join("layouts", file_name + ".lay"), "w") as file:
             for line in maze:

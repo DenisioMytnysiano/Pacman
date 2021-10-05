@@ -1,6 +1,6 @@
 from utils.graphics_utils import GraphicsUtils
 
-DEFAULT_GRID_SIZE = 25.0
+DEFAULT_GRID_SIZE = 15.0
 INFO_PANE_HEIGHT = 35
 BACKGROUND_COLOR = GraphicsUtils.format_color(0, 0, 0)
 WALL_COLOR = GraphicsUtils.format_color(0.5, 0.1, 0.6)

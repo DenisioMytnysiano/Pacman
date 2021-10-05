@@ -24,7 +24,6 @@ class Layout:
         self.num_ghosts = 0
         self.process_layout_text(layout_text)
         self.layout_text = layout_text
-        self.total_food = len(self.food.as_list())
 
     def deep_copy(self):
         return Layout(self.layout_text[:])

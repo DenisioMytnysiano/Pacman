@@ -69,7 +69,7 @@ class ActionUtils:
             neighbour = MathUtils.add_vectors(cell, vector)
             x, y = neighbour
             if not walls[int(x)][int(y)]:
-                neighbors.append(neighbour)
+                neighbors.append((neighbour, action))
 
         return neighbors
 

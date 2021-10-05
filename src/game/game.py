@@ -1,8 +1,5 @@
 from dataclasses import dataclass
 
-from search.search_controller import SearchController
-
-
 @dataclass
 class Game:
 
@@ -21,15 +18,17 @@ class Game:
         agent_index = self.starting_index
         num_agents = len(self.agents)
 
+        for agent in self.agents:
+            if hasattr(agent, "register_state"):
+                agent.register_state(self.state)
+
         while not self.game_over:
-            agent = self.agents[agent_index]
+            agent = self.agents[0]
             observation = self.state.deep_copy()
             action = agent.get_action(observation)
             self.move_history.append((agent_index, action))
             self.state = self.state.generate_successor(agent_index, action)
             self.display.update(self.state.data)
             self.rules.process(self.state, self)
-            if agent_index == num_agents + 1:
-                self.num_moves += 1
             agent_index = (agent_index + 1) % num_agents
         self.display.finish()
