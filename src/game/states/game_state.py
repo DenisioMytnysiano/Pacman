@@ -52,6 +52,7 @@ class GameState:
         GhostRules.check_death(state, agentIndex)
         state.data._agent_moved = agentIndex
         state.data.score += state.data.score_change
+        state.data._last_action = action
         return state
 
     def get_pacman_state(self):
@@ -88,3 +89,17 @@ class GameState:
     def is_win(self):
         return self.data._win
 
+    def get_walls(self):
+        return self.data.layout.walls
+
+    def get_ghost_position(self, idx: int):
+        return self.get_ghost_state(idx).get_position()
+
+    def get_ghost_positions(self):
+        return [ghost.get_position() for ghost in self.data.agent_states[1:]]
+
+    def get_food_sources(self):
+        return self.data.food.as_list()
+
+    def get_last_action(self):
+        return self.data._last_action

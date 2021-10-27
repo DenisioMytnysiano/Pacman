@@ -31,5 +31,5 @@ class SearchAgent(Agent):
 
 class AllFoodSearchAgent(SearchAgent):
 
-    def __init__(self, cost_fn: CostFn = UniformCostFn, greedy: bool = False):
-        self.search_fn = partial(a_star_all_food, heuristics=manhattan_distance,cost_fn=cost_fn, greedy=greedy)
+    def __init__(self, heuristic=manhattan_distance, cost_fn: CostFn = UniformCostFn, greedy: bool = False):
+        self.search_fn = partial(a_star_all_food, heuristics=heuristic,cost_fn=cost_fn, greedy=greedy)

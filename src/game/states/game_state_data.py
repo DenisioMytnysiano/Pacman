@@ -16,6 +16,7 @@ class GameStateData:
             self._eaten = prev_state._eaten
             self.score = prev_state.score
 
+        self._last_action = None
         self._food_eaten = None
         self._food_added = None
         self._capsule_eaten = None

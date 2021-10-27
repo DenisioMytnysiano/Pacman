@@ -1,38 +1,5 @@
-import numpy as np
 import heapq
-from collections import deque
 from typing import Any, Union
-from dataclasses import dataclass
-
-from game.components import Cell
-
-
-class Queue:
-    def __init__(self) -> None:
-        self.data = deque()
-
-    def push(self, value: Any) -> None:
-        self.data.append(value)
-
-    def pop(self) -> Any:
-        return self.data.popleft()
-
-    def is_empty(self) -> bool:
-        return len(self.data) == 0
-
-
-class Stack:
-    def __init__(self) -> None:
-        self.data = deque()
-
-    def push(self, value: Any) -> None:
-        self.data.append(value)
-
-    def pop(self) -> Any:
-        return self.data.pop()
-
-    def is_empty(self) -> bool:
-        return len(self.data) == 0
 
 
 class PriorityQueue:
@@ -48,31 +15,3 @@ class PriorityQueue:
 
     def is_empty(self) -> bool:
         return len(self.queue) == 0
-
-
-@dataclass(eq=False)
-class DistanceMemory:
-    dist: np.ndarray
-    mapping: dict[Cell, int]
-    goal_idxs: dict[int, int]
-
-    def get(self, start, end):
-        i_idx = self.goal_idxs[self.mapping[end]]
-        j_idx = self.mapping[start]
-        return self.dist[i_idx, j_idx]
-
-
-class IndexDict:
-    def __init__(self) -> None:
-        self.idx = 0
-        self.data = dict()
-
-    def __getitem__(self, position) -> int:
-        idx = self.data.get(position, self.idx)
-        if idx == self.idx:
-            self.idx = idx + 1
-            self.data[position] = idx
-        return idx
-
-    def as_dict(self):
-        return self.data

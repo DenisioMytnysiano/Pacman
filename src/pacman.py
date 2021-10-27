@@ -5,7 +5,6 @@ from game.components.layout import Layout
 from game.rules.game_rules import ClassicGameRules
 from graphics.pacman_graphics import PacmanGraphics
 from utils.maze_generator import MazeGenerator
-from search.heuristics import *
 
 def get_size(size):
     return [int(x) for x in size.split("x")]
@@ -24,9 +23,7 @@ def setup_game(cli_args):
     parser.add_option('--agent-type', dest='agent_type',
                       help='Search agent type', default="SearchAgent")
     parser.add_option('--maze', dest='maze_name',
-                      help='Maze name', default="maze_single_point")
-    parser.add_option('--heuristic', dest='heuristic',
-                      help='Heuristic', default="manhattan_distance")
+                      help='Maze name', default="mediumClassic")
     options, other_junk = parser.parse_args(cli_args)
     if options.generate_maze:
         file_name = "generatedMaze"
@@ -35,11 +32,11 @@ def setup_game(cli_args):
         args['layout'] = layout.get_layout(file_name)
     else:
         args['layout'] = layout.get_layout(options.maze_name)
-    pacman_type = load_agent(options.agent_type)
-    pacman = pacman_type(heuristic=eval(options.heuristic))
+    pacman_type = load_agent("ExpectimaxAgent")
+    pacman = pacman_type()
     args['pacman'] = pacman
 
-    ghost_type = load_agent("RandomGhost")
+    ghost_type = load_agent("DirectionalGhost")
     args['ghosts'] = [ghost_type(i + 1) for i in range(4)]
 
     from graphics import pacman_graphics

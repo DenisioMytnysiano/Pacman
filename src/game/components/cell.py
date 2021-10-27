@@ -1,4 +1,7 @@
+from collections import defaultdict
 from dataclasses import dataclass
+from queue import Queue
+
 from utils.action_utils import ActionUtils
 from utils.directions import Directions
 
@@ -26,3 +29,4 @@ class Cell:
         if direction == Directions.STOP:
             direction = self.direction
         return Cell((x + dx, y + dy), direction)
+
