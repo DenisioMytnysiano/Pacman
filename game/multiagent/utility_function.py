@@ -24,7 +24,7 @@ def utility_fn(state: ReflexState, maze_dists: MazeDistance, dist_mult=1e2, food
 
     game_score = (
             dist_mult / (food_dist if food_dist < 2 * ghost_dist else -ghost_dist)
-            + food_mult / num_food
+            + food_mult / num_food if num_food > 0 else 1
             + random.randint(-2, 2)
     )
     return game_score
