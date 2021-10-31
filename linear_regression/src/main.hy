@@ -31,8 +31,9 @@
 (print (data.head))
 
 ;; Split the data into train and test
-(setv train_data (cut data 0 4))
-(setv test_data (cut data 4 (len data)))
+(setv test_data
+(cut data 0 5))
+(setv train_data (cut data 5 (len data)))
 
 ;; EDA
 (plot_value_count_chart train_data "agent_type" "bar")
@@ -53,7 +54,7 @@
 (setv cat_cols ["is_win" "agent_type"])
 (setv encoder (OrdinalEncoder))
 (assoc x_train cat_cols (encoder.fit_transform (get x_train cat_cols)))
-(assoc x_valid cat_cols (encoder.fit_transform (get x_valid cat_cols)))
+(assoc x_valid cat_cols (encoder.transform (get x_valid cat_cols)))
 
 ;;Regression model
 (setv model (LinearRegression))
@@ -65,7 +66,7 @@
 ;;Prediction
 (setv x_test (get (split_data test_data) 0))
 (setv y_test (get (split_data test_data) 1))
-(assoc x_test cat_cols (encoder.fit_transform (get x_test cat_cols)))
+(assoc x_test cat_cols (encoder.transform (get x_test cat_cols)))
 (setv y_pred (model.predict x_test))
 (print "Predicted values:")
 (print y_pred)
@@ -77,7 +78,6 @@
  }))
 
 (print stats)
-
 
 
 
