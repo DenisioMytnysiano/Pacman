@@ -1,4 +1,7 @@
 from dataclasses import dataclass
+
+import numpy as np
+
 from game.rules.pacman_rules import PacmanRules
 from game.rules.ghost_rules import GhostRules
 from game.states.game_state_data import GameStateData
@@ -58,6 +61,9 @@ class GameState:
     def get_pacman_state(self):
         return self.data.agent_states[0].copy()
 
+    def get_food(self):
+        return self.data.food
+
     def get_pacman_position(self):
         return self.data.agent_states[0].get_position()
 
@@ -103,3 +109,27 @@ class GameState:
 
     def get_last_action(self):
         return self.data._last_action
+
+    def get_pacman_matrix(self) -> np.ndarray:
+        pacman = self.get_pacman_state()
+        walls = self.get_walls().data
+
+        matrix = np.zeros_like(walls)
+        if pacman.is_pacman:
+            xx, yy = int(pacman.get_position()[0]), int(pacman.get_position()[1])
+            matrix[xx][yy] = 1
+        return matrix
+
+    def get_ghost_matrix(self) -> np.ndarray:
+        agents = self.get_agent_states()
+        walls = self.get_walls().data
+
+        matrix = np.zeros_like(walls)
+        for agent in agents:
+            if not agent.is_pacman:
+                xx, yy = int(agent.get_position()[0]), int(agent.get_position()[1])
+                matrix[xx][yy] = 1
+        return matrix
+
+    def get_agent_states(self):
+        return self.data.agent_states

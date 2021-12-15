@@ -1,9 +1,13 @@
 import sys
+
+from agents import DQNAgent
 from agents.agent import Agent
 from game.components import layout
 from game.components.layout import Layout
 from game.rules.game_rules import ClassicGameRules
 from graphics.pacman_graphics import PacmanGraphics
+from rl import DQNAgentConfig, ModelConfig, DQNConfig, EpsParams
+from rl.dqn.model import Model
 from utils.maze_generator import MazeGenerator
 
 def get_size(size):
@@ -32,8 +36,27 @@ def setup_game(cli_args):
         args['layout'] = layout.get_layout(file_name)
     else:
         args['layout'] = layout.get_layout(options.maze_name)
-    pacman_type = load_agent("ExpectimaxAgent")
-    pacman = pacman_type()
+    agent_config = DQNAgentConfig(
+        model=ModelConfig(
+            dqn=DQNConfig(
+                width=args["layout"].width,
+                height=args["layout"].height,
+                in_channels=4,
+                out_features=4,
+            ),
+            memory=10000,
+            lr=2e-4,
+            batch_size=64,
+            gamma=0.999,
+            update_step=200,
+            device="cpu",
+            train_start=2000,
+            model_path="model.pt",
+        ),
+        eps_params=EpsParams(start=0.9, end=0.05, step=10000),
+        train=True,
+    )
+    pacman = DQNAgent(agent_config)
     args['pacman'] = pacman
 
     ghost_type = load_agent("DirectionalGhost")
@@ -68,4 +91,5 @@ def run_game(layout: Layout, pacman: Agent, ghosts: list[Agent],
 
 if __name__ == '__main__':
     setup = setup_game(sys.argv[1:])
-    run_game(**setup)
+    for i in range(10):
+        run_game(**setup)

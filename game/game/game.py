@@ -55,6 +55,10 @@ class Game:
                 self.num_moves += 1
             agent_index = (agent_index + 1) % num_agents
 
+            for agent in self.agents:
+                if hasattr(agent, "final"):
+                    agent.final(self.state)
+
         self.elapsed = time.time() - start_time
         record = self.serialize()
         if record is not None:

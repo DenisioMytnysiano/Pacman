@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 
 
 class MathUtils:
@@ -45,5 +46,7 @@ class MathUtils:
         choice = np.random.choice(values, p=distribution)
         return choice
 
+def to_numpy(tensor: torch.Tensor) -> np.ndarray:
+    return tensor.cpu().detach().numpy()
 
 
